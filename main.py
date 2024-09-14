@@ -1,15 +1,25 @@
-from routerOpenAI import RouterOpenAI
-openai = RouterOpenAI()
+from llms.llmOpenAI import LLMOpenAI
+openai = LLMOpenAI()
+from utils.template import Template
 
-from template import Template
-template = Template(
-    """Are there any terms I should be aware of before signing there these terms of service? 
-    
-    TERMS OF SERVICE
-    {tos}""")
+history = []
 
-with open("youtube.txt", "r", encoding="utf-8") as file:
-    youtube = file.read()
+while True:
+    user = input("USER: ")
+    history.append({"role": "USER", "content": user})
+    response = openai.chat(history)
+    print("AI: " + response)
+    history.append({"role": "AI", "content": response})
 
-prompt = template.fill(tos=youtube)
-print(openai.complete("chatgpt-4o-latest", prompt))
+# docs = [{"doc":"https://www.google.com/search?q=capital+of+france"},
+#         {"doc":"https://en.wikipedia.org/wiki/Paris"},
+#         {"doc":"https://en.wikipedia.org/wiki/France"}]
+
+template = Template("""
+{messages}[{role}: {content}\n]
+THESE {type} CAN HELP YOU:
+{docs}[{doc}\n]
+""")
+
+template.fill(messages=history, docs=docs, type="LINKS")
+
