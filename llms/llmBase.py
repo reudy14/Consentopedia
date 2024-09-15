@@ -3,8 +3,7 @@ from utils.template import Template
 
 class LLMBase(ABC):
     """for communicating with llms and all of their functions"""
-    def __init__(self, apikey, url=""):
-        self.apikey = apikey
+    def __init__(self, url=""):
         self.url = url
         
     @abstractmethod
